@@ -1,7 +1,7 @@
 <h1 align="center">
-@amodx/binary
+@amodx/controls
 </h1>
 
 ---
 
-Amodx binary library.
+Amodx controls library.
