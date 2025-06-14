@@ -1,6 +1,6 @@
 {
   "name": "@amodx/controls",
-  "version": "0.0.03",
+  "version": "0.0.31",
   "module": "index.js",
   "types": "index.d.ts",
   "type": "module",
