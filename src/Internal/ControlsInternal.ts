@@ -1,8 +1,8 @@
-import { KeyDownEvent, MouseDownEvent } from "../Events/Register";
+import { KeyDownEvent, PointerDownEvent } from "../Events/Register";
 
 export class ControlsInternal {
   static _keysForRelease = new Map<string, KeyDownEvent[]>();
-  static _mouseButtonsForRelease = new Map<string, MouseDownEvent[]>();
+  static _mouseButtonsForRelease = new Map<string, PointerDownEvent[]>();
 
   static addKeyForRelease(key: string, event: KeyDownEvent) {
     let events = this._keysForRelease.get(key)!;
@@ -22,7 +22,7 @@ export class ControlsInternal {
     events.length = 0;
   }
 
-  static addMouseButtonForRelease(key: string, event: MouseDownEvent) {
+  static addMouseButtonForRelease(key: string, event: PointerDownEvent) {
     let events = this._mouseButtonsForRelease.get(key)!;
     if (!events) {
       events = [];

@@ -34,11 +34,11 @@ export default function (controls: typeof Controls) {
   const gamePaddisconnectListener = (e: GamepadEvent) =>
     GamepadManager.removeGamepad(e);
 
-  const mouseDownListener = (event: MouseEvent) => {
+  const pointerDownListener = (event: MouseEvent) => {
     const button = ControlsMap.mapMoueButton(event.button);
     if (controls._capturing && controls._capturingMode == "keyboard") {
       controls._capturedData = {
-        mouse: {
+        pointer: {
           mode: "down",
           button: button,
         },
@@ -47,47 +47,45 @@ export default function (controls: typeof Controls) {
       return;
     }
 
-    down: {
-      const key = ControlsMap.getMouseId(button, "down");
-      const control = user.getControlByType(key);
-      control &&
-        control.run(
-          new (ControlEventManager.getEvent(ControlEventTypes.MouseDown)!)(
-            control,
-            event
-          )
-        );
-      break down;
-    }
-    hold: {
-      const key = ControlsMap.getMouseId(button, "hold");
-      const control = user.getControlByType(key);
-      if (!control || ControlsInternal.hasHold(button)) break hold;
-
-      control.run(
-        new (ControlEventManager.getEvent(ControlEventTypes.MouseHold)!)(
-          control,
+    const downControl = user.getControlByType(
+      ControlsMap.getMouseId(button, "down")
+    );
+    downControl &&
+      downControl.run(
+        new (ControlEventManager.getEvent(ControlEventTypes.PointerDown)!)(
+          downControl,
           event
         )
       );
 
-      const input = control.data.input;
+    const holdControl = user.getControlByType(
+      ControlsMap.getMouseId(button, "hold")
+    );
+    if (holdControl && !ControlsInternal.hasHold(button)) {
+      holdControl.run(
+        new (ControlEventManager.getEvent(ControlEventTypes.PointerHold)!)(
+          holdControl,
+          event
+        )
+      );
+
+      const input = holdControl.data.input;
       ControlsInternal.addHold(
         button,
         () =>
-          control.run(
-            new (ControlEventManager.getEvent(ControlEventTypes.MouseHold)!)(
-              control,
+          holdControl.run(
+            new (ControlEventManager.getEvent(ControlEventTypes.PointerHold)!)(
+              holdControl,
               event
             )
           ),
-        input.mouse?.holdDelay ? input.mouse?.holdDelay : 10,
-        input.mouse?.initHoldDelay ? input.mouse?.initHoldDelay : 250
+        input.pointer?.holdDelay ? input.pointer?.holdDelay : 10,
+        input.pointer?.initHoldDelay ? input.pointer?.initHoldDelay : 250
       );
     }
   };
 
-  const mouseUp = (event: MouseEvent) => {
+  const pointerUpListener = (event: MouseEvent) => {
     const button = ControlsMap.mapMoueButton(event.button);
     ControlsInternal.removeHold(button);
     ControlsInternal.releaseMouseButton(`${event.button}`);
@@ -96,7 +94,7 @@ export default function (controls: typeof Controls) {
     const control = user.getControlByType(key);
     control &&
       control.run(
-        new (ControlEventManager.getEvent(ControlEventTypes.MouseUp)!)(
+        new (ControlEventManager.getEvent(ControlEventTypes.PointerUp)!)(
           control,
           event
         )
@@ -117,38 +115,36 @@ export default function (controls: typeof Controls) {
       return;
     }
 
-    down: {
-      const key = ControlsMap.getKeyBaordId(keyBoardKey, "down");
-      const control = user.getControlByType(key);
-      if (!control || heldKeybaordKey.has(event.key)) break down;
-      control.run(
+    const downControl = user.getControlByType(
+      ControlsMap.getKeyBaordId(keyBoardKey, "down")
+    );
+    if (downControl && !heldKeybaordKey.has(event.key)) {
+      downControl.run(
         new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardDown)!)(
-          control,
+          downControl,
           event
         )
       );
       heldKeybaordKey.add(event.key);
-
-      return;
     }
 
-    hold: {
-      const key = ControlsMap.getKeyBaordId(keyBoardKey, "hold");
-      const control = user.getControlByType(key);
-      if (!control || ControlsInternal.hasHold(keyBoardKey)) break hold;
-      control.run(
+    const holdControl = user.getControlByType(
+      ControlsMap.getKeyBaordId(keyBoardKey, "hold")
+    );
+    if (holdControl && !ControlsInternal.hasHold(keyBoardKey)) {
+      holdControl.run(
         new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardHold)!)(
-          control,
+          holdControl,
           event
         )
       );
-      const input = control.data.input;
+      const input = holdControl.data.input;
       ControlsInternal.addHold(
         keyBoardKey,
         () =>
-          control.run(
+          holdControl.run(
             new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardHold)!)(
-              control,
+              holdControl,
               event
             )
           ),
@@ -221,8 +217,8 @@ export default function (controls: typeof Controls) {
   const addListeners = () => {
     window.addEventListener("gamepadconnected", gamePadConnectionListener);
     window.addEventListener("gamepaddisconnected", gamePaddisconnectListener);
-    rootElement.addEventListener("mousedown", mouseDownListener);
-    rootElement.addEventListener("mouseup", mouseUp);
+    rootElement.addEventListener("pointerdown", pointerDownListener);
+    rootElement.addEventListener("pointerup", pointerUpListener);
     rootElement.addEventListener("wheel", wheelListener);
     rootElement.addEventListener("keydown", keyDownListener);
     rootElement.addEventListener("keyup", keyUpListener);
@@ -233,8 +229,8 @@ export default function (controls: typeof Controls) {
       "gamepaddisconnected",
       gamePaddisconnectListener
     );
-    rootElement.removeEventListener("mousedown", mouseDownListener);
-    rootElement.removeEventListener("mouseup", mouseUp);
+    rootElement.removeEventListener("pointerdown", pointerDownListener);
+    rootElement.removeEventListener("pointerup", pointerUpListener);
     rootElement.removeEventListener("wheel", wheelListener);
     rootElement.removeEventListener("keydown", keyDownListener);
     rootElement.removeEventListener("keyup", keyUpListener);

@@ -4,34 +4,34 @@ import { ControlEvent } from "../ControlEventBase";
 import { Control } from "../../Controls/Control";
 import { ControlsInternal } from "../../Internal/ControlsInternal";
 
-abstract class BaseMouseEvent<
+abstract class BasePointerEvent<
   Events extends Record<string, any>,
-> extends ControlEvent<Events, MouseEvent> {
-  readonly inputType = ControlInputTypes.Mouse;
+> extends ControlEvent<Events, PointerEvent> {
+  readonly inputType = ControlInputTypes.Pointer;
   getButton() {
     return this.origin.button;
   }
 }
 
-export class MouseDownEvent extends BaseMouseEvent<{
+export class PointerDownEvent extends BasePointerEvent<{
   release: {};
 }> {
-  static eventType = ControlEventTypes.MouseDown;
-  readonly eventType = ControlEventTypes.MouseDown;
-  constructor(control: Control, event: MouseEvent) {
+  static eventType = ControlEventTypes.PointerDown;
+  readonly eventType = ControlEventTypes.PointerDown;
+  constructor(control: Control, event: PointerEvent) {
     super(control, event);
     ControlsInternal.addMouseButtonForRelease(`${event.button}`, this);
   }
 }
 
-export class MouseHoldEvent extends BaseMouseEvent<{}> {
-  static eventType = ControlEventTypes.MouseHold;
-  readonly eventType = ControlEventTypes.MouseHold;
+export class PointerHoldEvent extends BasePointerEvent<{}> {
+  static eventType = ControlEventTypes.PointerHold;
+  readonly eventType = ControlEventTypes.PointerHold;
 }
 
-export class MouseUpEvent extends BaseMouseEvent<{}> {
-  static eventType = ControlEventTypes.MouseUp;
-  readonly eventType = ControlEventTypes.MouseUp;
+export class PointerUpEvent extends BasePointerEvent<{}> {
+  static eventType = ControlEventTypes.PointerUp;
+  readonly eventType = ControlEventTypes.PointerUp;
 }
 
 abstract class BaseWheelEvent extends ControlEvent {

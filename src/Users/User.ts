@@ -1,4 +1,3 @@
-
 import { ControlEvent } from "../Events/ControlEventBase";
 import { Control } from "../Controls/Control";
 import { ControlsMap } from "../Internal/ControlsMap";
@@ -12,7 +11,7 @@ export class User {
   constructor(public id: number) {}
 
   getControlById(id: string) {
-    this._controls.get(id);
+    return this._controls.get(id);
   }
   getControlByType(id: string) {
     return this._controlsMapped.get(id);
@@ -36,8 +35,8 @@ export class User {
       );
       this._controlsMapped.set(key, controler);
     }
-    if (control[ControlInputTypes.Mouse]) {
-      const mouseControl = control[ControlInputTypes.Mouse];
+    if (control[ControlInputTypes.Pointer]) {
+      const mouseControl = control[ControlInputTypes.Pointer];
       const key = ControlsMap.getMouseId(
         mouseControl.button,
         mouseControl.mode

@@ -1,7 +1,7 @@
 export enum ControlEventTypes {
-  MouseDown = "mouse-down",
-  MouseUp = "mouse-up",
-  MouseHold = "mouse-hold",
+  PointerDown = "mouse-down",
+  PointerUp = "mouse-up",
+  PointerHold = "mouse-hold",
   KeyBoardDown = "keyboard-down",
   KeyBoardUp = "keyboard-up",
   KeyBoardHold = "keyboard-hold",

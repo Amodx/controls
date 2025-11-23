@@ -1,7 +1,7 @@
-import { InputModeTypes, MouseButtonTypes } from "../Controls/ControlData";
+import { InputModeTypes, PointerButtonTypes } from "../Controls/ControlData";
 
 export class ControlsMap {
-  static mapMoueButton(input: number): MouseButtonTypes {
+  static mapMoueButton(input: number): PointerButtonTypes {
     if (input == 0) return "primary";
     if (input == 2) return "secondary";
     return "middle";

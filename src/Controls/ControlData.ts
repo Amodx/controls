@@ -1,7 +1,7 @@
 import { ControlEvents } from "../Events/ControlsEventManager";
 
 export enum ControlInputTypes {
-  Mouse = "mouse",
+  Pointer = "pointer",
   Scroll = "scroll",
   KeyBoard = "keyboard",
   GamePadButton = "gamepad-button",
@@ -9,11 +9,11 @@ export enum ControlInputTypes {
 }
 
 export type InputModeTypes = "down" | "up" | "hold";
-export type MouseButtonTypes = "primary" | "secondary" | "middle";
+export type PointerButtonTypes = "primary" | "secondary" | "middle";
 export type ControlInputData = {
-  [ControlInputTypes.Mouse]?: {
+  [ControlInputTypes.Pointer]?: {
     mode: InputModeTypes;
-    button: MouseButtonTypes;
+    button: PointerButtonTypes;
     initHoldDelay?: number;
     holdDelay?: number;
   };

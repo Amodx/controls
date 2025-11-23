@@ -7,10 +7,10 @@ import {
   GamepadUpEvent,
   KeyUpEvent,
   KeyDownEvent,
-  MouseDownEvent,
-  MouseUpEvent,
+  PointerDownEvent,
+  PointerUpEvent,
   GamepadAxesMoveEvent,
-  MouseHoldEvent,
+  PointerHoldEvent,
   GamepadButtonHoldEvent,
   KeyHoldEvent,
 } from "./Register/index.js";
@@ -33,18 +33,18 @@ export type ControlEvents =
   | GamepadUpEvent
   | KeyUpEvent
   | KeyDownEvent
-  | MouseDownEvent
-  | MouseUpEvent
+  | PointerDownEvent
+  | PointerUpEvent
   | GamepadAxesMoveEvent
-  | MouseHoldEvent
+  | PointerHoldEvent
   | GamepadButtonHoldEvent
   | KeyHoldEvent;
 
 ControlEventManager.registerEvents([
   //mouse
-  MouseDownEvent,
-  MouseUpEvent,
-  MouseHoldEvent,
+  PointerDownEvent,
+  PointerUpEvent,
+  PointerHoldEvent,
   //gamepad button
   GamepadDownEvent,
   GamepadUpEvent,
