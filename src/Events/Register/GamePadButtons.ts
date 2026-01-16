@@ -1,4 +1,4 @@
-import { ControlInputTypes } from "../../Controls//ControlData";
+import { ControlInputTypes } from "../../Controls/ControlData";
 import { ControlEventTypes } from "../Event.types";
 import { ControlEvent } from "../ControlEventBase";
 
