@@ -16,18 +16,21 @@ export class Controls {
   static _capturing = false;
   static _capturingMode: "gamepad" | "keyboard" = "gamepad";
   static _capturedData: RecursivePartial<ControlInputData> | null = null;
-  static mainUser: User;
+  static mainUser: User|null=null;
   static controlRootElement: HTMLElement | Window = window;
   private constructor() {}
   static reInitControls = () => {};
   static clearControls = () => {};
 
   private static _initalized = false;
-  static init(controlRootElement: HTMLElement | Window = window) {
+  static init(
+    controlRootElement: HTMLElement | Window = window,
+    pointerMode: "mouse" | "pointer" = "mouse",
+  ) {
     this.controlRootElement = controlRootElement;
     if (this._initalized) return this;
     this._initalized = true;
-    const { addListeners, removeListeners } = InitControls(this);
+    const { addListeners, removeListeners } = InitControls(this,pointerMode);
     this.clearControls = () => {
       removeListeners();
     };
@@ -35,6 +38,14 @@ export class Controls {
       addListeners();
     };
     return this;
+  }
+
+  static deinit(){
+    this.clearControls();
+    this.controls.clear();
+    UserManager.clear();
+    this.mainUser = null;
+    this._initalized = false;
   }
 
   static registerControls(data: ControlGroupData[]) {
@@ -48,7 +59,7 @@ export class Controls {
 
   static captureControlForInput(
     controlId: string,
-    mode: "keyboard" | "gamepad" = "keyboard"
+    mode: "keyboard" | "gamepad" = "keyboard",
   ) {
     return new Promise((resolve) => {
       this._capturingMode = mode;
@@ -68,7 +79,7 @@ export class Controls {
 
   static updateControlInputData(
     controlId: string,
-    data: RecursivePartial<ControlInputData>
+    data: RecursivePartial<ControlInputData>,
   ) {
     const control = this.getControl(controlId);
     if (!control) {
@@ -92,8 +103,8 @@ export class Controls {
     UserManager.updateControls();
   }
 
-  static update(delta = 0.16) {
+  static update() {
     GamepadManager.updateGamepads();
-    ControlsInternal.runHoldUpdate(delta);
+    ControlsInternal.runHoldUpdate();
   }
 }

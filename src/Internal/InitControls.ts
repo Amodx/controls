@@ -7,7 +7,10 @@ import { ControlEventManager } from "../Events/ControlsEventManager";
 import { ControlEventTypes } from "../Events/Event.types";
 import { ControlsInternal } from "./ControlsInternal";
 
-export default function (controls: typeof Controls) {
+export default function (
+  controls: typeof Controls,
+  pointerMode: "mouse" | "pointer",
+) {
   const rootElement = controls.controlRootElement as HTMLElement;
   const user = UserManager.addUser(0);
   controls.mainUser = user;
@@ -27,7 +30,7 @@ export default function (controls: typeof Controls) {
           controls._capturing = false;
           return;
         }
-      }
+      },
     );
   };
 
@@ -48,25 +51,25 @@ export default function (controls: typeof Controls) {
     }
 
     const downControl = user.getControlByType(
-      ControlsMap.getMouseId(button, "down")
+      ControlsMap.getMouseId(button, "down"),
     );
     downControl &&
       downControl.run(
         new (ControlEventManager.getEvent(ControlEventTypes.PointerDown)!)(
           downControl,
-          event
-        )
+          event,
+        ),
       );
 
     const holdControl = user.getControlByType(
-      ControlsMap.getMouseId(button, "hold")
+      ControlsMap.getMouseId(button, "hold"),
     );
     if (holdControl && !ControlsInternal.hasHold(button)) {
       holdControl.run(
         new (ControlEventManager.getEvent(ControlEventTypes.PointerHold)!)(
           holdControl,
-          event
-        )
+          event,
+        ),
       );
 
       const input = holdControl.data.input;
@@ -76,11 +79,11 @@ export default function (controls: typeof Controls) {
           holdControl.run(
             new (ControlEventManager.getEvent(ControlEventTypes.PointerHold)!)(
               holdControl,
-              event
-            )
+              event,
+            ),
           ),
         input.pointer?.holdDelay ? input.pointer?.holdDelay : 10,
-        input.pointer?.initHoldDelay ? input.pointer?.initHoldDelay : 250
+        input.pointer?.initHoldDelay ? input.pointer?.initHoldDelay : 250,
       );
     }
   };
@@ -96,9 +99,13 @@ export default function (controls: typeof Controls) {
       control.run(
         new (ControlEventManager.getEvent(ControlEventTypes.PointerUp)!)(
           control,
-          event
-        )
+          event,
+        ),
       );
+  };
+
+  const contextMenuListener = (event: MouseEvent) => {
+    event.preventDefault();
   };
 
   const keyDownListener = (event: KeyboardEvent) => {
@@ -116,27 +123,27 @@ export default function (controls: typeof Controls) {
     }
 
     const downControl = user.getControlByType(
-      ControlsMap.getKeyBaordId(keyBoardKey, "down")
+      ControlsMap.getKeyBaordId(keyBoardKey, "down"),
     );
     if (downControl && !heldKeybaordKey.has(event.key)) {
       downControl.run(
         new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardDown)!)(
           downControl,
-          event
-        )
+          event,
+        ),
       );
       heldKeybaordKey.add(event.key);
     }
 
     const holdControl = user.getControlByType(
-      ControlsMap.getKeyBaordId(keyBoardKey, "hold")
+      ControlsMap.getKeyBaordId(keyBoardKey, "hold"),
     );
     if (holdControl && !ControlsInternal.hasHold(keyBoardKey)) {
       holdControl.run(
         new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardHold)!)(
           holdControl,
-          event
-        )
+          event,
+        ),
       );
       const input = holdControl.data.input;
       ControlsInternal.addHold(
@@ -145,11 +152,11 @@ export default function (controls: typeof Controls) {
           holdControl.run(
             new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardHold)!)(
               holdControl,
-              event
-            )
+              event,
+            ),
           ),
         input.keyboard?.holdDelay ? input.keyboard?.holdDelay : 10,
-        input.keyboard?.initHoldDelay ? input.keyboard?.initHoldDelay : 250
+        input.keyboard?.initHoldDelay ? input.keyboard?.initHoldDelay : 250,
       );
     }
   };
@@ -166,8 +173,8 @@ export default function (controls: typeof Controls) {
       control.run(
         new (ControlEventManager.getEvent(ControlEventTypes.KeyBoardUp)!)(
           control,
-          event
-        )
+          event,
+        ),
       );
   };
 
@@ -188,8 +195,8 @@ export default function (controls: typeof Controls) {
         control.run(
           new (ControlEventManager.getEvent(ControlEventTypes.WheelUp)!)(
             control,
-            event
-          )
+            event,
+          ),
         );
     } else {
       if (controls._capturing && controls._capturingMode == "keyboard") {
@@ -208,8 +215,8 @@ export default function (controls: typeof Controls) {
         control.run(
           new (ControlEventManager.getEvent(ControlEventTypes.WheelDown)!)(
             control,
-            event
-          )
+            event,
+          ),
         );
     }
   };
@@ -217,8 +224,16 @@ export default function (controls: typeof Controls) {
   const addListeners = () => {
     window.addEventListener("gamepadconnected", gamePadConnectionListener);
     window.addEventListener("gamepaddisconnected", gamePaddisconnectListener);
-    rootElement.addEventListener("pointerdown", pointerDownListener);
-    rootElement.addEventListener("pointerup", pointerUpListener);
+    if (pointerMode == "mouse") {
+      rootElement.addEventListener("mousedown", pointerDownListener);
+      rootElement.addEventListener("mouseup", pointerUpListener);
+    }
+    if (pointerMode == "pointer") {
+      rootElement.addEventListener("pointerdown", pointerDownListener);
+      rootElement.addEventListener("pointerup", pointerUpListener);
+    }
+
+    rootElement.addEventListener("contextmenu", contextMenuListener);
     rootElement.addEventListener("wheel", wheelListener);
     rootElement.addEventListener("keydown", keyDownListener);
     rootElement.addEventListener("keyup", keyUpListener);
@@ -227,10 +242,17 @@ export default function (controls: typeof Controls) {
     window.removeEventListener("gamepadconnected", gamePadConnectionListener);
     window.removeEventListener(
       "gamepaddisconnected",
-      gamePaddisconnectListener
+      gamePaddisconnectListener,
     );
-    rootElement.removeEventListener("pointerdown", pointerDownListener);
-    rootElement.removeEventListener("pointerup", pointerUpListener);
+    if (pointerMode == "mouse") {
+      rootElement.removeEventListener("mousedown", pointerDownListener);
+      rootElement.removeEventListener("mouseup", pointerUpListener);
+    }
+    if (pointerMode == "pointer") {
+      rootElement.removeEventListener("pointerdown", pointerDownListener);
+      rootElement.removeEventListener("pointerup", pointerUpListener);
+    }
+    rootElement.removeEventListener("contextmenu", contextMenuListener);
     rootElement.removeEventListener("wheel", wheelListener);
     rootElement.removeEventListener("keydown", keyDownListener);
     rootElement.removeEventListener("keyup", keyUpListener);

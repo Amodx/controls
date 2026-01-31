@@ -5,6 +5,11 @@ export class ControlRegister {
   static _controlGroups = new Map<string, ControlGroupData>();
   static _controlData = new Map<string, ControlAction>();
 
+  static clear(){
+    this._controlData.clear();
+    this._controlGroups.clear();
+  }
+
   static registerData(groups: ControlGroupData[]) {
     for (const group of groups) {
       this._controlGroups.set(group.id, group);

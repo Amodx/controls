@@ -4,6 +4,13 @@ import { User } from "./User";
 export class UserManager {
   static _users = new Map<number, User>();
 
+  static clear() {
+    for (const [id, user] of this._users) {
+      user.clearControls();
+    }
+    this._users.clear();
+  }
+
   static addUser(id: number) {
     if (this._users.has(id)) return this._users.get(id)!;
     const newUser = new User(id);
