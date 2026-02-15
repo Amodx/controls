@@ -3,7 +3,7 @@ import { DefaultGamePadButtons } from "../index.js";
 import { GamepadAxesMoveEvent } from "../Events/Register/GamePadAxes.js";
 import { Observable } from "@amodx/core/Observers/Observable.js";
 import { User } from "../Users/User.js";
-import { ControlsMap } from "../Internal/ControlsMap.js"
+import { ControlsMap } from "../Internal/ControlsMap.js";
 import { ControlEventManager } from "../Events/ControlsEventManager.js";
 import { ControlEventTypes } from "../Events/Event.types.js";
 import { ControlsInternal } from "../Internal/ControlsInternal.js";
@@ -46,7 +46,7 @@ export class GamepadController {
 
   constructor(
     public user: User,
-    public gamepad: Gamepad
+    public gamepad: Gamepad,
   ) {
     for (const button of GamepadController.BINDINGS.XBOX360) {
       this.pressed[button] = -1;
@@ -83,7 +83,7 @@ export class GamepadController {
     }
 
     if (this._testAxes(gp.axes[2]) || this._testAxes(gp.axes[3])) {
-      const key = ControlsMap.getGamePadAxeusId("Left");
+      const key = ControlsMap.getGamePadAxeusId("Right");
       const control = this.user.getControlByType(key);
       if (control) {
         this._axes2[0] = gp.axes[2];
@@ -107,8 +107,8 @@ export class GamepadController {
           if (control) {
             control.run(
               new (ControlEventManager.getEvent(
-                ControlEventTypes.GamePadButtonDown
-              )!)(control, this)
+                ControlEventTypes.GamePadButtonDown,
+              )!)(control, this),
             );
           }
           this.observables.buttonPressed.notify({
@@ -127,8 +127,8 @@ export class GamepadController {
           if (!ControlsInternal.hasHold(id)) {
             control.run(
               new (ControlEventManager.getEvent(
-                ControlEventTypes.GamePadButtonHold
-              )!)(control, this)
+                ControlEventTypes.GamePadButtonHold,
+              )!)(control, this),
             );
             const input = control.data.input;
             let delay = input["gamepad-button"]?.holdDelay;
@@ -138,14 +138,14 @@ export class GamepadController {
               () => {
                 control.run(
                   new (ControlEventManager.getEvent(
-                    ControlEventTypes.GamePadButtonHold
-                  )!)(control, this)
+                    ControlEventTypes.GamePadButtonHold,
+                  )!)(control, this),
                 );
               },
               delay,
               input["gamepad-button"]?.initHoldDelay
                 ? input["gamepad-button"]?.initHoldDelay
-                : 250
+                : 250,
             );
           }
         }
@@ -156,8 +156,8 @@ export class GamepadController {
           if (control) {
             control.run(
               new (ControlEventManager.getEvent(
-                ControlEventTypes.GamePadButtonUp
-              )!)(control, this)
+                ControlEventTypes.GamePadButtonUp,
+              )!)(control, this),
             );
           }
         }
