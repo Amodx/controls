@@ -5,7 +5,7 @@ export class ControlRegister {
   static _controlGroups = new Map<string, ControlGroupData>();
   static _controlData = new Map<string, ControlAction>();
 
-  static clear(){
+  static clear() {
     this._controlData.clear();
     this._controlGroups.clear();
   }
@@ -19,25 +19,6 @@ export class ControlRegister {
     }
   }
 
-  static store(): ControlData[] {
-    const groups: ControlData[] = [];
-    for (const [key, group] of this._controlGroups) {
-      for (const control of group.controls) {
-        const clone = structuredClone(control);
-        delete (clone as any)["action"];
-        groups.push(clone);
-      }
-    }
-    return groups;
-  }
-
-  static loadIn(data: ControlData[]) {
-    for (const control of data) {
-      const con = this._controlData.get(control.id);
-      if (!con) continue;
-      this._controlData.set(control.id, { ...con, ...control });
-    }
-  }
 
   static getControlData(id: string) {
     const controlData = this._controlData.get(id);

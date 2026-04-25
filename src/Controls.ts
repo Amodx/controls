@@ -16,7 +16,7 @@ export class Controls {
   static _capturing = false;
   static _capturingMode: "gamepad" | "keyboard" = "gamepad";
   static _capturedData: RecursivePartial<ControlInputData> | null = null;
-  static mainUser: User|null=null;
+  static mainUser: User | null = null;
   static controlRootElement: HTMLElement | Window = window;
   private constructor() {}
   static reInitControls = () => {};
@@ -30,7 +30,7 @@ export class Controls {
     this.controlRootElement = controlRootElement;
     if (this._initalized) return this;
     this._initalized = true;
-    const { addListeners, removeListeners } = InitControls(this,pointerMode);
+    const { addListeners, removeListeners } = InitControls(this, pointerMode);
     this.clearControls = () => {
       removeListeners();
     };
@@ -40,7 +40,7 @@ export class Controls {
     return this;
   }
 
-  static deinit(){
+  static deinit() {
     this.clearControls();
     this.controls.clear();
     UserManager.clear();
@@ -95,11 +95,23 @@ export class Controls {
   }
 
   static serializeInputData(): ControlData[] {
-    return this.controls.store();
+    const groups: ControlData[] = [];
+    for (const [key, group] of this.controls._controlGroups) {
+      for (const control of group.controls) {
+        const clone = { ...control };
+        delete (clone as any)["action"];
+        groups.push(structuredClone(clone));
+      }
+    }
+    return groups;
   }
 
   static injestInputData(data: ControlData[]) {
-    this.controls.loadIn(data);
+    for (const control of data) {
+      const con = this.controls._controlData.get(control.id);
+      if (!con) continue;
+      this.controls._controlData.set(control.id, { ...con, ...control });
+    }
     UserManager.updateControls();
   }
 
